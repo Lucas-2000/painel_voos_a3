@@ -37,7 +37,7 @@ public class PainelPrincipal extends JFrame {
     private void createTable() {
         Object[][] data = {
             {"2581", "Azul", "São Paulo", "Portão 1", "09:00", "Confirmado"},
-            {"3900", "Latam", "Acre", "Portão 2", "10:30", "Atrasado"},
+            {"3900", "Latam", "Alagoas", "Portão 2", "10:30", "Atrasado"},
             {"1445", "Gol", "Sergipe", "Portão 3", "11:45", "Cancelado"},
         };
 
