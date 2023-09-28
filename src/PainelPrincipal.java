@@ -18,6 +18,10 @@ public class PainelPrincipal extends JFrame {
     private JLabel lblVoosConfirmados;
     private JLabel lblVoosAtrasadosCancelados;
     private JSeparator separator;
+    private JTextField txtCompania;
+    private JTextField txtPortao;
+    private JLabel lblCompania;
+    private JLabel lblPortao;
 
     public PainelPrincipal() {
         setContentPane(MainPanel);
