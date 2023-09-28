@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 public class PainelPrincipal extends JFrame {
     private JPanel MainPanel;
@@ -11,17 +13,15 @@ public class PainelPrincipal extends JFrame {
     private JButton btnCadastrar;
     private JLabel lblDestino;
     private JTextField txtDestino;
-    private JList listVoosConfirmados;
     private JComboBox cbStatus;
     private JLabel lblStatus;
-    private JList listVoosAtrasadosCancelados;
-    private JLabel lblVoosConfirmados;
-    private JLabel lblVoosAtrasadosCancelados;
+    private JLabel lblVoos;
     private JSeparator separator;
-    private JTextField txtCompania;
+    private JTextField txtCompanhia;
     private JTextField txtPortao;
-    private JLabel lblCompania;
+    private JLabel lblCompanhia;
     private JLabel lblPortao;
+    private JTable tblVoos;
 
     public PainelPrincipal() {
         setContentPane(MainPanel);
@@ -30,6 +30,21 @@ public class PainelPrincipal extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
+
+        createTable();
+    }
+
+    private void createTable() {
+        Object[][] data = {
+            {"2581", "Azul", "São Paulo", "Portão 1", "09:00", "Confirmado"},
+            {"3900", "Latam", "Acre", "Portão 2", "10:30", "Atrasado"},
+            {"1445", "Gol", "Sergipe", "Portão 3", "11:45", "Cancelado"},
+        };
+
+        tblVoos.setModel(new DefaultTableModel(
+                data,
+                new String[]{"Código", "Companhia", "Destino", "Portão", "Horário", "Status"}
+        ));
     }
 
     public static void main(String[] args) {
