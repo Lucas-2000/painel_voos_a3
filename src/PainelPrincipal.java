@@ -1,6 +1,7 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class PainelPrincipal extends JFrame {
     private JPanel MainPanel;
@@ -23,6 +24,8 @@ public class PainelPrincipal extends JFrame {
     private JLabel lblPortao;
     private JTable tblVoos;
 
+    static Fila fila = new Fila();
+
     public PainelPrincipal() {
         setContentPane(MainPanel);
         setTitle("Painel Principal");
@@ -31,18 +34,56 @@ public class PainelPrincipal extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
 
-        createTable();
+        criarTabela();
+
+        btnCadastrar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                adicionarNaFila();
+            }
+        });
     }
 
-    private void createTable() {
-        Object[][] data = {
-            {"2581", "Azul", "São Paulo", "Portão 1", "09:00", "Confirmado"},
-            {"3900", "Latam", "Alagoas", "Portão 2", "10:30", "Atrasado"},
-            {"1445", "Gol", "Sergipe", "Portão 3", "11:45", "Cancelado"},
-        };
+    private void adicionarNaFila() {
+        String codigo = txtCodigo.getText();
+        String companhia = txtCompanhia.getText();
+        String destino = txtDestino.getText();
+        String portao = txtPortao.getText();
+        String horario = txtHorário.getText();
+        String status = cbStatus.getSelectedItem().toString();
 
+        if (!codigo.isEmpty() && !companhia.isEmpty() && !destino.isEmpty() &&
+                !portao.isEmpty() && !horario.isEmpty() && status != "Selecione")  {
+
+            Voo novoVoo = new Voo(codigo, companhia, destino, portao, horario, status);
+            fila.store(novoVoo);
+
+            txtCodigo.setText("");
+            txtCompanhia.setText("");
+            txtDestino.setText("");
+            txtPortao.setText("");
+            txtHorário.setText("");
+            cbStatus.setSelectedIndex(0);
+
+            atualizarTabela();
+        } else {
+            JOptionPane.showMessageDialog(this, "Preencha todos os campos antes de cadastrar.");
+        }
+    }
+
+    private void atualizarTabela() {
+        DefaultTableModel model = (DefaultTableModel) tblVoos.getModel();
+
+        while (!fila.isEmpty()) {
+            Voo voo = fila.retrieve();
+            Object[] vooData = {voo.getCodigo(), voo.getCompanhia(), voo.getDestino(), voo.getPortao(), voo.getHorario(), voo.getStatus()};
+            model.addRow(vooData);
+        }
+    }
+
+    private void criarTabela() {
         tblVoos.setModel(new DefaultTableModel(
-                data,
+                new Object[][]{},
                 new String[]{"Código", "Companhia", "Destino", "Portão", "Horário", "Status"}
         ));
     }
