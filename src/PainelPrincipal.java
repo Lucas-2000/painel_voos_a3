@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 public class PainelPrincipal extends JFrame {
     private JPanel MainPanel;
@@ -72,10 +73,12 @@ public class PainelPrincipal extends JFrame {
     }
 
     private void atualizarTabela() {
+        List<Voo> voos = fila.getVoos();
+
         DefaultTableModel model = (DefaultTableModel) tblVoos.getModel();
 
-        while (!fila.isEmpty()) {
-            Voo voo = fila.retrieve();
+        model.setRowCount(0);
+        for (Voo voo : voos) {
             Object[] vooData = {voo.getCodigo(), voo.getCompanhia(), voo.getDestino(), voo.getPortao(), voo.getHorario(), voo.getStatus()};
             model.addRow(vooData);
         }

@@ -1,67 +1,81 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Fila {
-    private int tamanho, front, rear;
-    private Voo[] vet;
-
-    public Fila(){
-        this.tamanho = 5;
-        this.vet = new Voo[5];
-        this.front = 0;
-        this.rear = 0;
+    static class Nodo {
+        Voo data;
+        Nodo link;
     }
 
-    public Fila(int tamanho) {
-        this.tamanho = tamanho;
-        this.vet = new Voo[tamanho];
-        this.front = 0;
-        this.rear = 0;
+    Nodo front, rear;
+
+    Fila() {
+        front = rear = null;
     }
 
-    public int next(int n) {
-        if(n == tamanho-1)
-            return 0;
-        else
-            return n+1;
-        // return (n+1)%tamanho;
-    }
+    void store(Voo elem) {
+        Nodo nodo = new Nodo();
+        nodo.data = elem;
 
-    public boolean isFull(){
-        if (next(rear) == front)
-            return true;
-        else
-            return false;
-    }
-
-    public boolean isEmpty(){
-        if (rear == front)
-            return true;
-        else
-            return false;
-    }
-
-    public void store(Voo elem){
-        if(isFull()){
-            System.out.println("Overflow!");
-            System.exit(1);
-        }
-        else {
-            vet[rear]=elem;
-            rear = next(rear);
+        if (rear == null) {
+            front = rear = nodo;
+        } else {
+            rear.link = nodo;
+            rear = nodo;
         }
     }
 
-    public Voo retrieve(){
-        if(isEmpty()){
-            System.out.println("Underflow!");
-            System.exit(1);
-            //return '*';
+    Voo retrieve() {
+        if (front == null) {
+            rear = null;
+            System.out.println("A fila está vazia.");
+            System.exit(0);
         }
-        //else
-        Voo aux = vet[front];
-        front = next(front);
+
+        Voo aux = front.data;
+        front = front.link;
+
         return aux;
     }
 
-    public void destroy(){
-        front = rear;
+    void destroy() {
+        while (front != null) {
+            Nodo aux = front;
+            front = aux.link;
+            aux = null;
+        }
+
+        rear = null;
     }
+
+    List<Voo> getVoos() {
+        List<Voo> voos = new ArrayList<>();
+        Nodo aux = front;
+
+        while (aux != null) {
+            voos.add(aux.data);
+            aux = aux.link;
+        }
+
+        return voos;
+    }
+
+    void mostrar() {
+        Nodo aux = front;
+
+        while (aux != null) {
+            System.out.println(aux.data);
+            aux = aux.link;
+        }
+    }
+
+    boolean isFull() {
+        Nodo nextRear = rear.link;
+        return nextRear == front;
+    }
+
+    boolean isEmpty() {
+        return rear == null;
+    }
+
 }

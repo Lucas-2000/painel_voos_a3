@@ -62,4 +62,14 @@ public class Voo {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "{Código: " + codigo +
+                ", Companhia: " + companhia +
+                ", Destino: " + destino +
+                ", Portão: " + portao +
+                ", Horário: " + horario +
+                ", Status: " + status + "}";
+    }
 }
