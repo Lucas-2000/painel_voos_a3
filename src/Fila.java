@@ -4,7 +4,8 @@ import java.util.List;
 public class Fila {
     static class Nodo {
         Voo data;
-        Nodo link;
+        Nodo next;
+        Nodo prev;
     }
 
     Nodo front, rear;
@@ -20,7 +21,8 @@ public class Fila {
         if (rear == null) {
             front = rear = nodo;
         } else {
-            rear.link = nodo;
+            rear.next = nodo;
+            nodo.prev = rear;
             rear = nodo;
         }
     }
@@ -33,7 +35,11 @@ public class Fila {
         }
 
         Voo aux = front.data;
-        front = front.link;
+        front = front.next;
+
+        if (front != null) {
+            front.prev = null;
+        }
 
         return aux;
     }
@@ -41,7 +47,7 @@ public class Fila {
     void destroy() {
         while (front != null) {
             Nodo aux = front;
-            front = aux.link;
+            front = aux.next;
             aux = null;
         }
 
@@ -54,7 +60,7 @@ public class Fila {
 
         while (aux != null) {
             voos.add(aux.data);
-            aux = aux.link;
+            aux = aux.next;
         }
 
         return voos;
@@ -65,17 +71,11 @@ public class Fila {
 
         while (aux != null) {
             System.out.println(aux.data);
-            aux = aux.link;
+            aux = aux.next;
         }
-    }
-
-    boolean isFull() {
-        Nodo nextRear = rear.link;
-        return nextRear == front;
     }
 
     boolean isEmpty() {
         return rear == null;
     }
-
 }
