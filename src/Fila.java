@@ -61,8 +61,8 @@ public class Fila {
         while (aux != null) {
             voos.add(aux.data);
             aux = aux.next;
-        }
 
+        }
         return voos;
     }
 
@@ -74,6 +74,60 @@ public class Fila {
             aux = aux.next;
         }
     }
+
+    public int getPrioridade(String status) {
+
+        int prioridade = 0;
+
+        switch (status) {
+            case "Confirmado":
+                prioridade = 1;
+                break;
+            case "Previsto":
+                prioridade = 2;
+                break;
+            case "Atrasado":
+                prioridade = 3;
+                break;
+            case "Cancelado":
+                prioridade = 4;
+                break;
+            default:
+                prioridade = 5; // Prioridade padrão para outros estados
+                break;
+        }
+        return prioridade;
+    }
+
+    public void priorizarFila() {
+        // Crie uma lista para cada nível de prioridade
+        List<Voo>[] listasPrioridade = new ArrayList[5];
+        for (int i = 0; i < 5; i++) {
+            listasPrioridade[i] = new ArrayList<>();
+        }
+
+        // Separe os voos nas listas de acordo com a prioridade
+        Nodo aux = front;
+        while (aux != null) {
+            Voo voo = aux.data;
+            int prioridade = getPrioridade(voo.getStatus());
+            listasPrioridade[prioridade - 1].add(voo);
+            aux = aux.next;
+        }
+
+        // Limpe a fila atual
+        destroy();
+
+        // Recrie a fila a partir das listas de prioridade
+        for (int i = 0; i < 5; i++) {
+            for (Voo voo : listasPrioridade[i]) {
+                store(voo);
+            }
+        }
+        System.out.println(getVoos());
+    }
+
+
 
     boolean isEmpty() {
         return rear == null;

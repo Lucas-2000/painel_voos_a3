@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PainelPrincipal extends JFrame {
@@ -66,11 +67,15 @@ public class PainelPrincipal extends JFrame {
             txtHorário.setText("");
             cbStatus.setSelectedIndex(0);
 
+            //chama métodos
+            fila.priorizarFila();
             atualizarTabela();
         } else {
             JOptionPane.showMessageDialog(this, "Preencha todos os campos antes de cadastrar.");
         }
     }
+
+
 
     private void atualizarTabela() {
         List<Voo> voos = fila.getVoos();
