@@ -1,8 +1,10 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class Fila {
-    static class Nodo {
+    private static class Nodo {
         Voo data;
         Nodo next;
         Nodo prev;
@@ -25,23 +27,6 @@ public class Fila {
             nodo.prev = rear;
             rear = nodo;
         }
-    }
-
-    Voo retrieve() {
-        if (front == null) {
-            rear = null;
-            System.out.println("A fila está vazia.");
-            System.exit(0);
-        }
-
-        Voo aux = front.data;
-        front = front.next;
-
-        if (front != null) {
-            front.prev = null;
-        }
-
-        return aux;
     }
 
     void destroy() {
@@ -75,59 +60,66 @@ public class Fila {
         }
     }
 
-    public int getPrioridade(String status) {
-
-        int prioridade = 0;
-
-        switch (status) {
-            case "Confirmado":
-                prioridade = 1;
-                break;
-            case "Previsto":
-                prioridade = 2;
-                break;
-            case "Atrasado":
-                prioridade = 3;
-                break;
-            case "Cancelado":
-                prioridade = 4;
-                break;
-            default:
-                prioridade = 5; // Prioridade padrão para outros estados
-                break;
-        }
-        return prioridade;
-    }
-
     public void priorizarFila() {
-        // Crie uma lista para cada nível de prioridade
-        List<Voo>[] listasPrioridade = new ArrayList[5];
-        for (int i = 0; i < 5; i++) {
-            listasPrioridade[i] = new ArrayList<>();
-        }
+        List<Voo> voos = getVoos();
 
-        // Separe os voos nas listas de acordo com a prioridade
-        Nodo aux = front;
-        while (aux != null) {
-            Voo voo = aux.data;
-            int prioridade = getPrioridade(voo.getStatus());
-            listasPrioridade[prioridade - 1].add(voo);
-            aux = aux.next;
-        }
-
-        // Limpe a fila atual
         destroy();
 
-        // Recrie a fila a partir das listas de prioridade
-        for (int i = 0; i < 5; i++) {
-            for (Voo voo : listasPrioridade[i]) {
-                store(voo);
+        Collections.sort(voos, new Comparator<Voo>() {
+            @Override
+            public int compare(Voo voo1, Voo voo2) {
+                return voo1.getHorario().compareTo(voo2.getHorario());
             }
+        });
+
+        for (Voo voo : voos) {
+            store(voo);
         }
+
         System.out.println(getVoos());
     }
 
 
+    public boolean atualizar(String codigo, Voo novoVoo) {
+        Nodo aux = front;
+
+        while (aux != null) {
+            if (aux.data.getCodigo().equals(codigo)) {
+                aux.data = novoVoo;
+
+                return true;
+            }
+            aux = aux.next;
+        }
+
+        return false;
+    }
+
+    public boolean excluir(String codigo) {
+        Nodo aux = front;
+        Nodo prev = null;
+
+        while (aux != null) {
+            if (aux.data.getCodigo().equals(codigo)) {
+                if (prev == null) {
+                    front = aux.next;
+                } else {
+                    prev.next = aux.next;
+                }
+
+                if (aux == rear) {
+                    rear = prev;
+                }
+
+                return true;
+            }
+
+            prev = aux;
+            aux = aux.next;
+        }
+
+        return false;
+    }
 
     boolean isEmpty() {
         return rear == null;

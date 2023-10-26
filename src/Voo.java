@@ -1,3 +1,6 @@
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 public class Voo {
     private String codigo;
     private String companhia;
@@ -48,7 +51,8 @@ public class Voo {
     }
 
     public String getHorario() {
-        return horario;
+        LocalTime localTime = LocalTime.parse(horario, DateTimeFormatter.ofPattern("HH:mm"));
+        return localTime.format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 
     public void setHorario(String horario) {
