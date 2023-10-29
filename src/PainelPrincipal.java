@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+
 public class PainelPrincipal extends JFrame {
     private JPanel MainPanel;
     private JPanel NovoVooPanel;
@@ -42,6 +43,20 @@ public class PainelPrincipal extends JFrame {
         setVisible(true);
 
         criarTabela();
+
+        ActionListener atualizaVoos = new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                Voo proximoVoo = fila.getProximoVooEExcluir();
+                if (proximoVoo != null) {
+                    System.out.println("Próximo voo: " + proximoVoo.getCodigo());
+                    atualizarTabela();
+                } else {
+                    System.out.println("Nenhum voo disponível na fila.");
+                }
+                System.out.println("Atualizando...");
+            };
+        };
+        new Timer(30*1000, atualizaVoos).start();
 
         cbTipo.addActionListener(new ActionListener() {
             @Override
@@ -198,6 +213,8 @@ public class PainelPrincipal extends JFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Voo não encontrado.");
         }
+
+
     }
 
     public void excluirVoo() {
@@ -252,6 +269,8 @@ public class PainelPrincipal extends JFrame {
         String regex = "^[A-Za-z]{2}\\d{3}$";
         return codigo.matches(regex);
     }
+
+
 
     public static void main(String[] args) {
         new PainelPrincipal();

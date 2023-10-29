@@ -1,3 +1,5 @@
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,7 +11,7 @@ public class Fila {
         Nodo next;
         Nodo prev;
     }
-
+    static ArvoreBinaria arvore = new ArvoreBinaria();
     Nodo front, rear;
 
     Fila() {
@@ -119,6 +121,24 @@ public class Fila {
         }
 
         return false;
+    }
+
+    public Voo getProximoVooEExcluir() {
+        if (front == null) {
+            return null; // Retorna null se a fila estiver vazia
+        }
+
+        Voo primeiroVoo = front.data;
+        LocalTime horarioAtual = LocalTime.now();
+
+        // Enquanto houver voos com horário passado na fila, remova-os
+        while (primeiroVoo != null && horarioAtual.isAfter(LocalTime.parse(primeiroVoo.getHorario(), DateTimeFormatter.ofPattern("HH:mm")))) {
+            excluir(primeiroVoo.getCodigo());
+            arvore.excluir(primeiroVoo.getCodigo());
+            primeiroVoo = (front != null) ? front.data : null; // move a lista
+        }
+
+        return primeiroVoo;
     }
 
     boolean isEmpty() {
