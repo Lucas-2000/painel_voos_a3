@@ -1,3 +1,5 @@
+import java.util.Stack;
+
 public class ArvoreBinaria {
     private static class Nodo {
         Voo data;
@@ -17,95 +19,101 @@ public class ArvoreBinaria {
         root = null;
     }
 
-    public void inserir(Voo voo) {
-        root = inserirRec(root, voo);
-    }
-
-    private Nodo inserirRec(Nodo root, Voo voo) {
+    public void inserir(Voo voo) throws RuntimeException {
+        Nodo novoNodo = new Nodo(voo);
         if (root == null) {
-            root = new Nodo(voo);
-            return root;
+            root = novoNodo;
+            return;
         }
 
-        int comparacao = compareCodigos(voo.getCodigo(), root.data.getCodigo());
-
-        if (comparacao < 0) {
-            root.left = inserirRec(root.left, voo);
-        } else if (comparacao > 0) {
-            root.right = inserirRec(root.right, voo);
+        Nodo currentNode = root;
+        while (true) {
+            int comparacao = compareCodigos(voo.getCodigo(), currentNode.data.getCodigo());
+            if (comparacao < 0) {
+                if (currentNode.left == null) {
+                    currentNode.left = novoNodo;
+                    return;
+                }
+                currentNode = currentNode.left;
+            } else if (comparacao > 0) {
+                if (currentNode.right == null) {
+                    currentNode.right = novoNodo;
+                    return;
+                }
+                currentNode = currentNode.right;
+            } else {
+                throw new RuntimeException("Código do voo já existe.");
+            }
         }
-
-        return root;
     }
+
 
     public Voo buscar(String codigo) {
-        return buscarRec(root, codigo);
+        Nodo currentNode = root;
+        while (currentNode != null) {
+            int comparacao = compareCodigos(codigo, currentNode.data.getCodigo());
+            if (comparacao == 0) {
+                return currentNode.data;
+            } else if (comparacao < 0) {
+                currentNode = currentNode.left;
+            } else {
+                currentNode = currentNode.right;
+            }
+        }
+        return null;
     }
-
-    private Voo buscarRec(Nodo root, String codigo) {
-        if (root == null) {
-            System.out.println("Nó nulo encontrado.");
-            return null;
-        }
-
-        System.out.println("Comparando códigos: " + codigo + " com " + root.data.getCodigo());
-
-        if (root.data.getCodigo().equals(codigo)) {
-            System.out.println("Código encontrado: " + codigo);
-            return root.data;
-        }
-
-        int comparacao = compareCodigos(codigo, root.data.getCodigo());
-
-        if (comparacao < 0) {
-            System.out.println("Indo para o nó esquerdo.");
-            return buscarRec(root.left, codigo);
-        } else if (comparacao > 0) {
-            System.out.println("Indo para o nó direito.");
-            return buscarRec(root.right, codigo);
-        } else {
-            System.out.println("Códigos são iguais.");
-            return root.data;
-        }
-    }
-
 
     public void excluir(String codigo) {
-        root = excluirRec(root, codigo);
-    }
+        Nodo parentNode = null;
+        Nodo currentNode = root;
 
-    private Nodo excluirRec(Nodo root, String codigo) {
-        if (root == null) {
-            return root;
-        }
+        while (currentNode != null) {
+            int comparacao = compareCodigos(codigo, currentNode.data.getCodigo());
+            if (comparacao == 0) {
+                // Código encontrado
+                if (currentNode.left == null) {
+                    if (parentNode == null) {
+                        root = currentNode.right;
+                    } else if (currentNode == parentNode.left) {
+                        parentNode.left = currentNode.right;
+                    } else {
+                        parentNode.right = currentNode.right;
+                    }
+                    return;
+                } else if (currentNode.right == null) {
+                    if (parentNode == null) {
+                        root = currentNode.left;
+                    } else if (currentNode == parentNode.left) {
+                        parentNode.left = currentNode.left;
+                    } else {
+                        parentNode.right = currentNode.left;
+                    }
+                    return;
+                }
 
-        int comparacao = compareCodigos(codigo, root.data.getCodigo());
-
-        if (comparacao < 0) {
-            root.left = excluirRec(root.left, codigo);
-        } else if (comparacao > 0) {
-            root.right = excluirRec(root.right, codigo);
-        } else {
-            if (root.left == null) {
-                return root.right;
-            } else if (root.right == null) {
-                return root.left;
+                Nodo minValueNode = minValue(currentNode.right);
+                currentNode.data = minValueNode.data;
+                codigo = minValueNode.data.getCodigo();
+                parentNode = currentNode;
+                currentNode = currentNode.right;
+            } else if (comparacao < 0) {
+                parentNode = currentNode;
+                currentNode = currentNode.left;
+            } else {
+                parentNode = currentNode;
+                currentNode = currentNode.right;
             }
-
-            root.data = minValue(root.right);
-            root.right = excluirRec(root.right, root.data.getCodigo());
         }
 
-        return root;
+        // Código não foi encontrado na árvore
+        System.out.println("Código não encontrado na árvore: " + codigo);
     }
 
-    private Voo minValue(Nodo node) {
-        Voo minValue = node.data;
+    private Nodo minValue(Nodo node) {
         while (node.left != null) {
-            minValue = node.left.data;
             node = node.left;
         }
-        return minValue;
+        return node;
     }
 
     private int compareCodigos(String codigo1, String codigo2) {
@@ -120,14 +128,11 @@ public class ArvoreBinaria {
         for (int i = 0; i < codigo.length(); i++) {
             char c = codigo.charAt(i);
             if (Character.isLetter(c)) {
-                // Se for uma letra, adicione o valor da letra no total
                 total += Character.toUpperCase(c) - 'A' + 1;
             } else if (Character.isDigit(c)) {
-                // Se for um número, adicione o valor do dígito no total
                 total += Character.getNumericValue(c);
             }
         }
         return total;
     }
-
 }

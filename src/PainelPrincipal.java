@@ -44,17 +44,20 @@ public class PainelPrincipal extends JFrame {
 
         criarTabela();
 
-        ActionListener atualizaVoos = new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                Voo proximoVoo = fila.getProximoVooEExcluir();
-                if (proximoVoo != null) {
-                    System.out.println("Próximo voo: " + proximoVoo.getCodigo());
-                    atualizarTabela();
-                } else {
-                    System.out.println("Nenhum voo disponível na fila.");
-                }
-                System.out.println("Atualizando...");
-            };
+        ActionListener atualizaVoos = e -> {
+            var voos = fila.getVoosEExcluir();
+
+            for (Voo voo : voos) {
+                arvore.excluir(voo.getCodigo());
+            }
+
+            if (!fila.isEmpty()) {
+                atualizarTabela();
+            } else {
+                atualizarTabela();
+                System.out.println("Nenhum voo disponível na fila.");
+            }
+            System.out.println("Atualizando...");
         };
         new Timer(30*1000, atualizaVoos).start();
 
@@ -136,7 +139,7 @@ public class PainelPrincipal extends JFrame {
     }
 
     private void adicionarNaFila() {
-        String codigo = txtCodigo.getText();
+        String codigo = txtCodigo.getText().toUpperCase();
         String companhia = txtCompanhia.getText();
         String destino = txtDestino.getText();
         String portao = txtPortao.getText();
@@ -158,9 +161,16 @@ public class PainelPrincipal extends JFrame {
             return;
         }
 
-        Voo novoVoo = new Voo(codigo.toUpperCase(), companhia, destino, portao, horario, status);
+        Voo novoVoo = new Voo(codigo, companhia, destino, portao, horario, status);
+
+        try {
+            arvore.inserir(novoVoo);
+        } catch(RuntimeException e) {
+            JOptionPane.showMessageDialog(this, "Erro ao inserir o voo: " + e.getMessage());
+            return;
+        }
+
         fila.store(novoVoo);
-        arvore.inserir(novoVoo);
 
         txtCodigo.setText("");
         txtCompanhia.setText("");
@@ -175,7 +185,7 @@ public class PainelPrincipal extends JFrame {
     }
 
     public void atualizarVoo() {
-        String codigo = txtCodigo.getText();
+        String codigo = txtCodigo.getText().toUpperCase();
         String companhia = txtCompanhia.getText();
         String destino = txtDestino.getText();
         String portao = txtPortao.getText();
@@ -200,12 +210,20 @@ public class PainelPrincipal extends JFrame {
         Voo vooExistente = arvore.buscar(codigo);
 
         if (vooExistente != null) {
-            Voo novoVoo = new Voo(codigo.toUpperCase(), companhia, destino, portao, horario, status);
+            Voo novoVoo = new Voo(codigo, companhia, destino, portao, horario, status);
+
             arvore.excluir(codigo);
 
             fila.atualizar(codigo, novoVoo);
 
             arvore.inserir(novoVoo);
+
+            txtCodigo.setText("");
+            txtCompanhia.setText("");
+            txtDestino.setText("");
+            txtPortao.setText("");
+            txtHorario.setText("");
+            cbStatus.setSelectedIndex(0);
 
             // Chama métodos
             fila.priorizarFila();
@@ -213,8 +231,6 @@ public class PainelPrincipal extends JFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Voo não encontrado.");
         }
-
-
     }
 
     public void excluirVoo() {
@@ -236,14 +252,17 @@ public class PainelPrincipal extends JFrame {
     }
 
     private void atualizarTabela() {
-        List<Voo> voos = fila.getVoos();
+        Fila voos = fila.getFila();
 
         DefaultTableModel model = (DefaultTableModel) tblVoos.getModel();
-
         model.setRowCount(0);
-        for (Voo voo : voos) {
+
+        var currentNode = voos.front;
+        while (currentNode != null) {
+            Voo voo = voos.getVoo(currentNode);
             Object[] vooData = {voo.getCodigo(), voo.getCompanhia(), voo.getDestino(), voo.getPortao(), voo.getHorario(), voo.getStatus()};
             model.addRow(vooData);
+            currentNode = voos.getNext(currentNode);
         }
     }
 

@@ -110,6 +110,7 @@
                 <item value="Confirmado"/>
                 <item value="Atrasado"/>
                 <item value="Cancelado"/>
+                <item value="Decolando"/>
               </model>
             </properties>
           </component>

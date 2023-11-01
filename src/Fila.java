@@ -11,7 +11,7 @@ public class Fila {
         Nodo next;
         Nodo prev;
     }
-    static ArvoreBinaria arvore = new ArvoreBinaria();
+
     Nodo front, rear;
 
     Fila() {
@@ -51,6 +51,18 @@ public class Fila {
 
         }
         return voos;
+    }
+
+    public Fila getFila() {
+        return this;
+    }
+
+    public Voo getVoo(Nodo nodo) {
+        return nodo.data;
+    }
+
+    public Nodo getNext(Nodo nodo) {
+        return nodo.next;
     }
 
     void mostrar() {
@@ -123,22 +135,52 @@ public class Fila {
         return false;
     }
 
-    public Voo getProximoVooEExcluir() {
-        if (front == null) {
-            return null; // Retorna null se a fila estiver vazia
-        }
+//    public List<Voo> getVoosEExcluir() {
+//        LocalTime horarioAtual = LocalTime.now();
+//
+//        // Lista para armazenar os voos a serem excluídos
+//        List<Voo> voosExcluidos = new ArrayList<>();
+//
+//        // Percorre toda a fila
+//        while (front != null && horarioAtual.isAfter(LocalTime.parse(front.data.getHorario(), DateTimeFormatter.ofPattern("HH:mm")))) {
+//            Voo vooASerExcluido = front.data;
+//            excluir(vooASerExcluido.getCodigo());
+//            voosExcluidos.add(vooASerExcluido);
+//        }
+//
+//        return voosExcluidos;
+//    }
 
-        Voo primeiroVoo = front.data;
+    public List<Voo> getVoosEExcluir() {
         LocalTime horarioAtual = LocalTime.now();
+        LocalTime horarioLimite = horarioAtual.minusMinutes(30);
+        LocalTime horarioLimiteParaDecolando = horarioAtual.minusMinutes(5);
 
-        // Enquanto houver voos com horário passado na fila, remova-os
-        while (primeiroVoo != null && horarioAtual.isAfter(LocalTime.parse(primeiroVoo.getHorario(), DateTimeFormatter.ofPattern("HH:mm")))) {
-            excluir(primeiroVoo.getCodigo());
-            arvore.excluir(primeiroVoo.getCodigo());
-            primeiroVoo = (front != null) ? front.data : null; // move a lista
+        // Lista para armazenar os voos a serem excluídos
+        List<Voo> voosExcluidos = new ArrayList<>();
+
+        // Cópia da fila para iterar sobre ela
+        Nodo current = front;
+
+        while (current != null) {
+            LocalTime horarioDoVoo = LocalTime.parse(current.data.getHorario(), DateTimeFormatter.ofPattern("HH:mm"));
+
+            if (horarioDoVoo.isBefore(horarioLimite) && !current.data.getStatus().equals("Decolando")) {
+                Voo vooASerExcluido = current.data;
+                excluir(vooASerExcluido.getCodigo());
+                voosExcluidos.add(vooASerExcluido);
+            }
+
+            if (horarioDoVoo.isBefore(horarioLimiteParaDecolando) && current.data.getStatus().equals("Decolando")) {
+                Voo vooASerExcluido = current.data;
+                excluir(vooASerExcluido.getCodigo());
+                voosExcluidos.add(vooASerExcluido);
+            }
+
+            current = current.next;
         }
 
-        return primeiroVoo;
+        return voosExcluidos;
     }
 
     boolean isEmpty() {
