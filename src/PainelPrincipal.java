@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List;
 
 
 public class PainelPrincipal extends JFrame {
@@ -30,6 +29,7 @@ public class PainelPrincipal extends JFrame {
     private JTable tblVoos;
     private JComboBox cbTipo;
     private JLabel lblTitulo;
+    private JButton btnAbrirUsuario;
 
     static Fila fila = new Fila();
     static ArvoreBinaria arvore = new ArvoreBinaria();
@@ -134,6 +134,14 @@ public class PainelPrincipal extends JFrame {
                         excluirVoo();
                         break;
                 }
+            }
+        });
+
+        btnAbrirUsuario.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PainelUsuario painelUsuario = new PainelUsuario();
+                painelUsuario.setVisible(true);
             }
         });
     }
@@ -283,7 +291,7 @@ public class PainelPrincipal extends JFrame {
         }
     }
 
-    public boolean validaCodigo(String codigo) {
+    public static boolean validaCodigo(String codigo) {
         // Regex para validar se o código possui duas letras seguidos de 3 números
         String regex = "^[A-Za-z]{2}\\d{3}$";
         return codigo.matches(regex);
