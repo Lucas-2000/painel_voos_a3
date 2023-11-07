@@ -1,10 +1,15 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Time;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Date;
 
 
 public class PainelPrincipal extends JFrame {
@@ -30,6 +35,7 @@ public class PainelPrincipal extends JFrame {
     private JComboBox cbTipo;
     private JLabel lblTitulo;
     private JButton btnAbrirUsuario;
+    private JLabel lblHorarioAtual;
 
     static Fila fila = new Fila();
     static ArvoreBinaria arvore = new ArvoreBinaria();
@@ -37,7 +43,8 @@ public class PainelPrincipal extends JFrame {
     public PainelPrincipal() {
         setContentPane(MainPanel);
         setTitle("Painel Principal");
-        setSize(600, 600);
+        setMinimumSize(new Dimension(600, 600));
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
@@ -60,6 +67,15 @@ public class PainelPrincipal extends JFrame {
             System.out.println("Atualizando...");
         };
         new Timer(30*1000, atualizaVoos).start();
+
+        ActionListener calculaDataHoraAtual = e -> {
+            ZoneId zoneId = ZoneId.of("America/Sao_Paulo");
+            ZonedDateTime dataAtual = ZonedDateTime.now(zoneId);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            String dataHoraFormatada = dataAtual.format(formatter);
+            lblHorarioAtual.setText(dataHoraFormatada);
+        };
+        new Timer(1*1000, calculaDataHoraAtual).start();
 
         cbTipo.addActionListener(new ActionListener() {
             @Override
@@ -169,6 +185,11 @@ public class PainelPrincipal extends JFrame {
             return;
         }
 
+        if (!validaPortao(portao)) {
+            JOptionPane.showMessageDialog(this, "O Portão deve ter de 1 a 3 números inteiros");
+            return;
+        }
+
         Voo novoVoo = new Voo(codigo, companhia, destino, portao, horario, status);
 
         try {
@@ -212,6 +233,11 @@ public class PainelPrincipal extends JFrame {
 
         if (!validaCodigo(codigo)) {
             JOptionPane.showMessageDialog(this, "Formato incorreto do codigo, utilize o padrão AA111");
+            return;
+        }
+
+        if (!validaPortao(portao)) {
+            JOptionPane.showMessageDialog(this, "O Portão deve ter de 1 a 3 números inteiros");
             return;
         }
 
@@ -296,6 +322,15 @@ public class PainelPrincipal extends JFrame {
         String regex = "^[A-Za-z]{2}\\d{3}$";
         return codigo.matches(regex);
     }
+
+    public static boolean validaPortao(String portao) {
+        // Regex para validar se o código possui duas letras seguidos de 3 números
+        String regex = "^\\d{1,3}$";
+        return portao.matches(regex);
+    }
+
+
+
 
 
 

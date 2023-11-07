@@ -153,7 +153,7 @@ public class Fila {
 
     public List<Voo> getVoosEExcluir() {
         LocalTime horarioAtual = LocalTime.now();
-        LocalTime horarioLimite = horarioAtual.minusMinutes(30);
+        LocalTime horarioLimite = horarioAtual.minusMinutes(60);
         LocalTime horarioLimiteParaDecolando = horarioAtual.minusMinutes(5);
 
         // Lista para armazenar os voos a serem excluídos
@@ -165,10 +165,8 @@ public class Fila {
         while (current != null) {
             LocalTime horarioDoVoo = LocalTime.parse(current.data.getHorario(), DateTimeFormatter.ofPattern("HH:mm"));
 
-            if (horarioDoVoo.isBefore(horarioLimite) && !current.data.getStatus().equals("Decolando")) {
-                Voo vooASerExcluido = current.data;
-                excluir(vooASerExcluido.getCodigo());
-                voosExcluidos.add(vooASerExcluido);
+            if (horarioDoVoo.isBefore(horarioLimite) && !current.data.getStatus().equals("Decolando") && !current.data.getStatus().equals("Atrasado")) {
+                current.data.setStatus("Atrasado");
             }
 
             if (horarioDoVoo.isBefore(horarioLimiteParaDecolando) && current.data.getStatus().equals("Decolando")) {
@@ -176,6 +174,7 @@ public class Fila {
                 excluir(vooASerExcluido.getCodigo());
                 voosExcluidos.add(vooASerExcluido);
             }
+
 
             current = current.next;
         }

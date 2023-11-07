@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -8,12 +9,14 @@ public class PainelUsuario extends JFrame {
     private JTextField txtBuscar;
     private JPanel MainPanelUser;
     private JButton btnBuscar;
+    private JButton btnLimpar;
 
 
     public PainelUsuario(){
         setContentPane(MainPanelUser);
         setTitle("Painel Usuário");
-        setSize(600, 600);
+        setMinimumSize(new Dimension(600, 600));
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setVisible(true);
 
@@ -42,6 +45,14 @@ public class PainelUsuario extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 buscar();
+            }
+        });
+
+        btnLimpar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                preencheTabela();
+                txtBuscar.setText("");
             }
         });
     }
