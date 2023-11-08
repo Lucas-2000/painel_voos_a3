@@ -3,6 +3,9 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class PainelUsuario extends JFrame {
     private JTable tblVoosUser;
@@ -10,6 +13,7 @@ public class PainelUsuario extends JFrame {
     private JPanel MainPanelUser;
     private JButton btnBuscar;
     private JButton btnLimpar;
+    private JLabel lblHorarioAtual;
 
 
     public PainelUsuario(){
@@ -40,6 +44,15 @@ public class PainelUsuario extends JFrame {
             System.out.println("Atualizando...");
         };
         new Timer(30*1000, atualizaVoos).start();
+
+        ActionListener calculaDataHoraAtual = e -> {
+            ZoneId zoneId = ZoneId.of("America/Sao_Paulo");
+            ZonedDateTime dataAtual = ZonedDateTime.now(zoneId);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            String dataHoraFormatada = dataAtual.format(formatter);
+            lblHorarioAtual.setText(dataHoraFormatada);
+        };
+        new Timer(1*1000, calculaDataHoraAtual).start();
 
         btnBuscar.addActionListener(new ActionListener() {
             @Override

@@ -165,8 +165,14 @@ public class Fila {
         while (current != null) {
             LocalTime horarioDoVoo = LocalTime.parse(current.data.getHorario(), DateTimeFormatter.ofPattern("HH:mm"));
 
-            if (horarioDoVoo.isBefore(horarioLimite) && !current.data.getStatus().equals("Decolando") && !current.data.getStatus().equals("Atrasado")) {
+            if (horarioDoVoo.isBefore(horarioLimite) && !current.data.getStatus().equals("Decolando") && !current.data.getStatus().equals("Atrasado") && !current.data.getStatus().equals("Cancelado")) {
                 current.data.setStatus("Atrasado");
+            }
+
+            if (horarioDoVoo.isBefore(horarioLimite) && current.data.getStatus().equals("Cancelado")) {
+                Voo vooASerExcluido = current.data;
+                excluir(vooASerExcluido.getCodigo());
+                voosExcluidos.add(vooASerExcluido);
             }
 
             if (horarioDoVoo.isBefore(horarioLimiteParaDecolando) && current.data.getStatus().equals("Decolando")) {
