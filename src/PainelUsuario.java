@@ -41,6 +41,7 @@ public class PainelUsuario extends JFrame {
 
                 System.out.println("Nenhum voo disponível na fila.");
             }
+            txtBuscar.setText("");
             System.out.println("Atualizando...");
         };
         new Timer(30*1000, atualizaVoos).start();

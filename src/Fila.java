@@ -165,7 +165,7 @@ public class Fila {
         while (current != null) {
             LocalTime horarioDoVoo = LocalTime.parse(current.data.getHorario(), DateTimeFormatter.ofPattern("HH:mm"));
 
-            if (horarioDoVoo.isBefore(horarioLimite) && !current.data.getStatus().equals("Decolando") && !current.data.getStatus().equals("Atrasado") && !current.data.getStatus().equals("Cancelado")) {
+            if (horarioDoVoo.isBefore(horarioLimite) && !current.data.getStatus().equals("Decolando") && !current.data.getStatus().equals("Atrasado") && !current.data.getStatus().equals("Cancelado") && !current.data.getStatus().equals("Embarcando")) {
                 current.data.setStatus("Atrasado");
             }
 
