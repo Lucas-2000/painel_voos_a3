@@ -310,11 +310,15 @@ public class PainelPrincipal extends JFrame {
     private boolean validaFormatoHorario(String horario) {
         // Validar formatação do horário
         try {
+            String regex = "^(?:[01]\\d|2[0-3]):[0-5]\\d$";
+            if(!horario.matches(regex)) return false;
             LocalTime.parse(horario, DateTimeFormatter.ofPattern("HH:mm"));
             return true;
         } catch (DateTimeParseException e) {
             return false;
         }
+
+
     }
 
     public static boolean validaCodigo(String codigo) {
@@ -328,6 +332,8 @@ public class PainelPrincipal extends JFrame {
         String regex = "^\\d{1,3}$";
         return portao.matches(regex);
     }
+
+
 
 
 

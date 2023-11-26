@@ -121,7 +121,6 @@ public class PainelUsuario extends JFrame {
             currentNode = voos.getNext(currentNode);
         }
 
-        System.out.println(voos);
     }
 
     private void criarTabela() {
