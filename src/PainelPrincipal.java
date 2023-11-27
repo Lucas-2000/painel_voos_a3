@@ -3,13 +3,11 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Time;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
 
 
 public class PainelPrincipal extends JFrame {
@@ -36,6 +34,7 @@ public class PainelPrincipal extends JFrame {
     private JLabel lblTitulo;
     private JButton btnAbrirUsuario;
     private JLabel lblHorarioAtual;
+    private JButton btnBuscar;
 
     static Fila fila = new Fila();
     static ArvoreBinaria arvore = new ArvoreBinaria();
@@ -96,6 +95,8 @@ public class PainelPrincipal extends JFrame {
                         cbStatus.setVisible(true);
                         lblStatus.setVisible(true);
                         btnSalvar.setVisible(true);
+                        btnBuscar.setVisible(true);
+                        btnBuscar.setEnabled(false);
                         lblTitulo.setText("Cadastre o voo");
                         break;
                     case "Atualizar":
@@ -112,6 +113,8 @@ public class PainelPrincipal extends JFrame {
                         cbStatus.setVisible(true);
                         lblStatus.setVisible(true);
                         btnSalvar.setVisible(true);
+                        btnBuscar.setEnabled(true);
+                        btnBuscar.setVisible(true);
                         lblTitulo.setText("Atualize o voo");
                         break;
                     case "Excluir":
@@ -128,6 +131,7 @@ public class PainelPrincipal extends JFrame {
                         cbStatus.setVisible(false);
                         lblStatus.setVisible(false);
                         btnSalvar.setVisible(true);
+                        btnBuscar.setVisible(false);
                         lblTitulo.setText("Exclua o voo");
                         break;
                 }
@@ -160,7 +164,16 @@ public class PainelPrincipal extends JFrame {
                 painelUsuario.setVisible(true);
             }
         });
+
+        btnBuscar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                buscar();
+            }
+        });
     }
+
+
 
     private void adicionarNaFila() {
         String codigo = txtCodigo.getText().toUpperCase();
@@ -307,6 +320,34 @@ public class PainelPrincipal extends JFrame {
         ));
     }
 
+    private void buscar(){
+        String codigo = txtCodigo.getText().toUpperCase();
+
+        if (codigo.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Preencha o código para realizar a busca!");
+            return;
+        }
+
+        if (!PainelPrincipal.validaCodigo(codigo)) {
+            JOptionPane.showMessageDialog(this, "Formato incorreto do codigo, utilize o padrão AA111");
+            return;
+        }
+
+        Voo vooExistente = PainelPrincipal.arvore.buscar(codigo);
+
+        if (vooExistente != null) {
+            txtCompanhia.setText(vooExistente.getCompanhia());
+            txtDestino.setText(vooExistente.getDestino());
+            txtPortao.setText(vooExistente.getPortao());
+            txtHorario.setText(vooExistente.getHorario());
+            cbStatus.setSelectedItem(vooExistente.getStatus());
+        } else {
+            JOptionPane.showMessageDialog(this, "Voo não encontrado.");
+        }
+
+
+    }
+
     private boolean validaFormatoHorario(String horario) {
         // Validar formatação do horário
         try {
@@ -332,13 +373,6 @@ public class PainelPrincipal extends JFrame {
         String regex = "^\\d{1,3}$";
         return portao.matches(regex);
     }
-
-
-
-
-
-
-
 
     public static void main(String[] args) {
         new PainelPrincipal();

@@ -91,7 +91,7 @@ public class PainelUsuario extends JFrame {
         if (vooExistente != null) {
             String companhia = vooExistente.getCompanhia();
             String destino = vooExistente.getDestino();
-            String portao = vooExistente.getDestino();
+            String portao = vooExistente.getPortao();
             String horario = vooExistente.getHorario();
             String status = vooExistente.getStatus();
 
